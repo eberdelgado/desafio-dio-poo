@@ -4,6 +4,7 @@ import com.sun.source.doctree.SeeTree;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 public class Dev {
@@ -11,11 +12,24 @@ public class Dev {
     private Set<Conteudo> conteudoInscritos = new LinkedHashSet<>();
     private Set<Conteudo> conteudoConcluidos = new LinkedHashSet<>();
 
-    public void inscreverBootcamp(Bootcamp bootcamp){}
+    public void inscreverBootcamp(Bootcamp bootcamp){
+        this.conteudoInscritos = bootcamp.getConteudos();
+        bootcamp.getDevsInscritos().add(this);
+    }
 
-    public void progredir(){}
+    public void progredir(){
+        Optional<Conteudo> conteudo = this.conteudoInscritos.stream().findFirst();
+        if(conteudo.isPresent()) {
+            this.conteudoConcluidos.add(conteudo.get());
+            this.conteudoInscritos.remove(conteudo.get());
+        }else{
+            System.err.println("Você não esta inscrito em nenhum conteudo");
+        }
+    }
 
-    public void calcularXP(){}
+    public double calcularXP(){
+        return this.conteudoInscritos.stream().mapToDouble(Conteudo::calcularXP).sum();
+    }
 
     public String getNome() {
         return nome;
